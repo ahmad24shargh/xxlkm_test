@@ -1,4 +1,4 @@
-name: CI
+name: build userspace binary
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -14,21 +14,13 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     steps:
-      - name: exit
-        if: false
-        run: |
-          echo "I gave the exit command myself."
-          gh release delete "v1.0.7-45" --cleanup-tag -R "${{ github.repository_owner }}/${{ github.event.repository.name }}"
-          exit 0
-          false
-          
       - name: Checkout code
         uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0 # fetch full history
           filter: tree:0
           
-      - name: compile userspace handler
+      - name: compile userspace handler (with ndk)
         if: true
         run: |
           repo="${{ github.repository_owner }}/${{ github.event.repository.name }}"
