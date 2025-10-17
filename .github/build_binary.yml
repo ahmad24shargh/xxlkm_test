@@ -1,0 +1,56 @@
+name: CI
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - name: exit
+        if: false
+        run: |
+          echo "I gave the exit command myself."
+          gh release delete "v1.0.7-45" --cleanup-tag -R "${{ github.repository_owner }}/${{ github.event.repository.name }}"
+          exit 0
+          false
+          
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0 # fetch full history
+          filter: tree:0
+          
+      - name: compile userspace handler
+        if: true
+        run: |
+          repo="${{ github.repository_owner }}/${{ github.event.repository.name }}"
+          export TOOLCHAIN=${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64
+          export PATH="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${ANDROID_NDK_LATEST_HOME}/prebuilt/linux-x86_64/bin/:${PATH}
+          export API=33
+          export TARGET=aarch64-linux-android
+          My_Args=' -mcpu=cortex-a53+crypto+crc -mtune=cortex-a73 -march=armv8-a+crypto+crc -O3 -funroll-loops '
+          export CC="clang --target=${TARGET}${API} ${My_Args}"
+          $CC userspace.c -o lkm_test
+          
+      - name: upload compiled userspace binary
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: lkm_test
+          path: ./lkm_test
+          
+
+          
+
+          
+
+
+
+          
