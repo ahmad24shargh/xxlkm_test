@@ -1,4 +1,4 @@
-name: build userspace binary
+name: build userspace binary(with ndk)
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -31,12 +31,23 @@ jobs:
           My_Args=' -mcpu=cortex-a53+crypto+crc -mtune=cortex-a73 -march=armv8-a+crypto+crc -O3 -funroll-loops '
           export CC="clang --target=${TARGET}${API} ${My_Args}"
           $CC userspace.c -o lkm_test
+          mkdir -p binary
+          mv -f lkm_test binary/
           
-      - name: upload compiled userspace binary
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: lkm_test
-          path: ./lkm_test
+      #- name: upload compiled userspace binary
+      #  uses: actions/upload-artifact@v4.6.2
+      #  with:
+      #    name: lkm_test
+      #    path: ./lkm_test
+      
+       - name: refresh compiled userspace binary
+         run: |
+           git config user.name "GitHub Actions Bot"
+           git config user.email "<>"
+           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+           git add -A
+           git commit -am "refresh compiled userspace binary"
+           git push
           
 
           

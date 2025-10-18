@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 struct basic_payload {
-	long reply_ptr;
+	unsigned long reply_ptr;
 	char text[256];
 };
 
@@ -19,10 +19,10 @@ int main(int argc, char *argv[]) {
 	unsigned long magic2 = strtoul(argv[2], NULL, 0);
 	const char *arg = argv[3];
 	
-	long reply_value = 0; // we get reply on this
+	unsigned long reply_value = 0; // we get reply on this
 
 	struct basic_payload payload;
-	payload.reply_ptr = (long)&reply_value;
+	payload.reply_ptr = (unsigned long)&reply_value;
 	strncpy(payload.text, arg, sizeof(payload.text) - 1);
 	payload.text[sizeof(payload.text) - 1] = '\0';
 

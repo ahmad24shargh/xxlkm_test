@@ -32,7 +32,7 @@
 #define PRINT_ARG 1
 
 struct basic_payload {
-	long reply_ptr;
+	unsigned long reply_ptr;
 	char text[256];
 };
 
